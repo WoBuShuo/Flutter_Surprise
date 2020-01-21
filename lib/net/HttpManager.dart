@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_app/bean/Banner.dart';
+import 'package:flutter_app/bean/HotBean.dart';
 import 'package:flutter_app/bean/RecommendBean.dart';
 
 class HttpManager {
@@ -65,11 +66,15 @@ class HttpManager {
    Future<RecommendBean> recommendList() async {
     var data = await HttpManager.get("article/list/0/json", {"page": "0"});
     var dataList = data["data"];
-
-
-
-
     return  RecommendBean.fromJson(dataList);
+  }
+
+
+
+   Future<List<HotBean>> hotList() async {
+    var data = await HttpManager.get("/hotkey/json", {"page": "1"});
+    List dataList = data["data"];
+    return dataList.map((json) => HotBean.fromJson(json)).toList();
   }
 
 
