@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_app/SearchRoute.dart';
-import 'pager_main.dart';
+import 'package:flutter_app/page/SearchPage.dart';
+import 'HomePage.dart';
 
 class TabbedAppBarSample extends StatelessWidget {
   @override

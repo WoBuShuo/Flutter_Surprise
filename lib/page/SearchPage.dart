@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'dart:ui';
 
 import 'package:flutter_app/net/HttpManager.dart';
+import 'package:flutter_app/page/ListPage.dart';
 
 class SearchRoute extends StatefulWidget {
   @override
@@ -20,12 +21,12 @@ class SearchState extends State<SearchRoute> {
     super.initState();
   }
 
-   List<FlowText>  flowTextList=new List();
+  List<FlowText> flowTextList = new List();
 
   void getHotData() async {
     var data = await HttpManager.getInstance().hotList();
     setState(() {
-      for(int i=0;i<data.length;i++){
+      for (int i = 0; i < data.length; i++) {
         flowTextList.add(FlowText(data[i].name));
       }
     });
@@ -43,7 +44,7 @@ class SearchState extends State<SearchRoute> {
             height: MediaQueryData.fromWindow(window).padding.top,
             color: Colors.blue,
           ),
-          SearchView(),
+          SearchView(context),
           Padding(
             padding: EdgeInsets.only(top: 12, left: 12, bottom: 5),
             child: Text(
@@ -97,6 +98,13 @@ class FlowText extends StatelessWidget {
 }
 
 class SearchView extends StatelessWidget {
+
+  BuildContext _context;
+
+  SearchView(this._context);
+
+  var controler = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -105,9 +113,12 @@ class SearchView extends StatelessWidget {
       child: Row(
         children: <Widget>[
           Padding(
-            padding: EdgeInsets.only(left: 10, right: 10),
-            child: Icon(
-              Icons.arrow_back,
+            padding: EdgeInsets.only(left: 5, right: 5),
+            child: IconButton(
+              onPressed: () {
+                Navigator.pop(_context);
+              },
+              icon: Icon(Icons.arrow_back),
               color: Colors.white,
             ),
           ),
@@ -115,8 +126,9 @@ class SearchView extends StatelessWidget {
               child: Container(
             height: 35,
             child: TextField(
+              controller: controler,
               onSubmitted: (a) {
-                print(a);
+                searchAction();
               },
               decoration: InputDecoration(
                   fillColor: Colors.white,
@@ -134,13 +146,26 @@ class SearchView extends StatelessWidget {
           )),
           Padding(
             padding: EdgeInsets.only(left: 10, right: 10),
-            child: Text(
-              '搜索',
-              style: TextStyle(color: Colors.white),
+            child: GestureDetector(
+              onTap: () {
+                searchAction();
+              },
+              child: Text(
+                '搜索',
+                style: TextStyle(color: Colors.white),
+              ),
             ),
           )
         ],
       ),
     );
+  }
+
+  void searchAction() {
+    if (controler.text == "") {
+      return;
+    }
+    Navigator.push(_context,
+        MaterialPageRoute(builder: (context) => ListPage(controler.text)));
   }
 }

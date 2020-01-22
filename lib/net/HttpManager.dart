@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_app/bean/Banner.dart';
 import 'package:flutter_app/bean/HotBean.dart';
 import 'package:flutter_app/bean/RecommendBean.dart';
+import 'package:flutter_app/bean/SearchBean.dart';
 
 class HttpManager {
   static HttpManager _httpManager;
@@ -28,7 +29,7 @@ class HttpManager {
     return processResponse(response);
   }
 
-  static Future<Map<String, String>> post(
+  static Future<Map<String, dynamic>> post(
       String path, Map<String, dynamic> map) async {
     var response = await getInstance().dio.post(path,
         data: map,
@@ -76,6 +77,13 @@ class HttpManager {
     List dataList = data["data"];
     return dataList.map((json) => HotBean.fromJson(json)).toList();
   }
+
+  Future<SearchBean> searchList(String key) async {
+    var data = await HttpManager.post("article/query/0/json", {"k": key});
+    var dataList = data["data"];
+    return  SearchBean.fromJson(dataList);
+  }
+
 
 
 }
