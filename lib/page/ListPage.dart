@@ -39,7 +39,7 @@ class ListState extends State<ListPage>{
     setState(() {
 
       for(int i=0; i<data.datas.length;i++){
-        dataList.add(ListItem(data.datas[i].title,data.datas[i].link,data.datas[i].shareUser));
+        dataList.add(ListItem(data.datas[i].title,data.datas[i].link,data.datas[i].shareUser,data.datas[i].link));
       }
     });
   }

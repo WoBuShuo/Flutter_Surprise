@@ -90,7 +90,10 @@ class FlowText extends StatelessWidget {
             content,
             style: TextStyle(color: Colors.white),
           ),
-          onPressed: () {},
+          onPressed: () {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => ListPage(content)));
+          },
         ),
       ),
     );

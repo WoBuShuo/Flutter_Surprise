@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/bean/RecommendBean.dart';
 import 'package:flutter_app/net/HttpManager.dart';
+import 'package:flutter_app/page/WebPage.dart';
 
 //void main() => runApp(PagerApp());
 
@@ -15,7 +16,7 @@ class PagerApp extends StatefulWidget {
 }
 
 class PagerSate extends State<PagerApp> {
-  List<PagerItem> dataList=new List();
+  List<PagerItem> dataList = new List();
   List<Widget> listItems = new List();
 
   void _loadData() async {
@@ -26,7 +27,7 @@ class PagerSate extends State<PagerApp> {
     print("-----请求成功-------");
 
     setState(() {
-      for(int i = 0; i < data.length; i++){
+      for (int i = 0; i < data.length; i++) {
         dataList.add(new PagerItem(data[i].imagePath, data[i].title));
       }
 
@@ -35,7 +36,8 @@ class PagerSate extends State<PagerApp> {
         listItems.add(new ListItem(
             recommend.datas[i].title,
             recommend.datas[i].publishTime.toString(),
-            recommend.datas[i].shareUser));
+            recommend.datas[i].shareUser,recommend.datas[i].link)
+        );
       }
     });
   }
@@ -50,16 +52,16 @@ class PagerSate extends State<PagerApp> {
   @override
   Widget build(BuildContext context) {
     return
-     ListView(
-            children: listItems.toList(),
-          );
-
+      ListView(
+        children: listItems.toList(),
+      );
   }
 }
 
 class MainPagerView extends StatelessWidget {
 
   List<PagerItem> items;
+
   MainPagerView(this.items);
 
   @override
@@ -112,42 +114,52 @@ class ListItem extends StatelessWidget {
   String title;
   String time;
   String author;
+  String url;
 
-  ListItem(
-    this.title,
-    this.time,
-    this.author,
-  );
+  ListItem(this.title,
+      this.time,
+      this.author,
+      this.url);
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.all(10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(
-            title,
-            maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-                fontSize: 17, fontWeight: FontWeight.bold, color: Colors.black),
-          ),
-          Padding(
-              padding: EdgeInsets.only(top: 5),
-              child: Text(
-                author,
+    return
+      GestureDetector(
+        onTap: () {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => WebPage(title, url)));
+        },
+        child: Padding(
+          padding: EdgeInsets.all(10),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text(
+                title,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
                 style: TextStyle(
-                    fontSize: 12,
+                    fontSize: 17,
                     fontWeight: FontWeight.bold,
-                    color: Colors.grey),
-              )),
-          Padding(
-            padding: EdgeInsets.only(top: 12),
-            child: Divider(height: 1.0, indent: 0.0, color: Colors.grey),
-          )
-        ],
-      ),
-    );
+                    color: Colors.black),
+              ),
+              Padding(
+                  padding: EdgeInsets.only(top: 5),
+                  child: Text(
+                    author,
+                    style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey),
+                  )),
+              Padding(
+                padding: EdgeInsets.only(top: 12),
+                child: Divider(height: 1.0, indent: 0.0, color: Colors.grey),
+              )
+            ],
+          ),
+        ),
+
+      );
   }
 }
