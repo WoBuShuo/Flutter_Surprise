@@ -5,6 +5,7 @@ import 'dart:ui';
 
 import 'package:flutter_app/net/HttpManager.dart';
 import 'package:flutter_app/page/ListPage.dart';
+import 'package:flutter_app/page/widget/Toast.dart';
 
 class SearchRoute extends StatefulWidget {
   @override
@@ -166,8 +167,10 @@ class SearchView extends StatelessWidget {
 
   void searchAction() {
     if (controler.text == "") {
+      Toast.toast(_context,msg: "您还没有输入内容 ");
       return;
     }
+
     Navigator.push(_context,
         MaterialPageRoute(builder: (context) => ListPage(controler.text)));
   }

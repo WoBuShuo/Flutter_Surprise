@@ -78,8 +78,8 @@ class HttpManager {
     return dataList.map((json) => HotBean.fromJson(json)).toList();
   }
 
-  Future<SearchBean> searchList(String key) async {
-    var data = await HttpManager.post("article/query/0/json", {"k": key});
+  Future<SearchBean> searchList(String key,String page) async {
+    var data = await HttpManager.post("article/query/"+page+"/json", {"k": key});
     var dataList = data["data"];
     return  SearchBean.fromJson(dataList);
   }

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/bean/RecommendBean.dart';
 import 'package:flutter_app/net/HttpManager.dart';
 import 'package:flutter_app/page/WebPage.dart';
+import 'package:flutter_html/flutter_html.dart';
 
 //void main() => runApp(PagerApp());
 
@@ -143,6 +144,9 @@ class ListItem extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                     color: Colors.black),
               ),
+//            Html(
+//              data:title,
+//            ),
               Padding(
                   padding: EdgeInsets.only(top: 5),
                   child: Text(
