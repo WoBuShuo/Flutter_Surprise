@@ -1,8 +1,8 @@
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/bean/SearchBean.dart';
 import 'package:flutter_app/net/HttpManager.dart';
-import 'package:flutter_app/page/HomePage.dart';
 import 'package:flutter_html/flutter_html.dart';
 
 import 'WebPage.dart';
@@ -20,36 +20,62 @@ class ListPage extends StatefulWidget {
 }
 
 class ListState extends State<ListPage> {
+  ScrollController _scrollController = new ScrollController();
+
   String searchkey;
 
   ListState(this.searchkey);
 
   List<Widget> dataList = new List();
 
+  int page=1;
+
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     getSearchResult();
+    print("----");
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels ==
+          _scrollController.position.maxScrollExtent) {
+        if (!isLoading) {
+          isLoading = true;
+          page++;
+          getMoreData(page.toString());
+        }
+      }
+    });
   }
 
 //  var i=0;
   void getSearchResult() async {
     dataList.clear();
-    SearchBean data;
+    page=1;
+    SearchBean data =
+        await HttpManager.getInstance().searchList(searchkey, page.toString());
+    setState(() {
+      for (int i = 0; i < data.datas.length; i++) {
+        dataList.add(ListItem(data.datas[i].title, data.datas[i].link,
+            data.datas[i].shareUser, data.datas[i].link));
+      }
+      dataList.add(LoadMoreView());
+    });
+  }
 
-//    if (i==0) {
-    data = await HttpManager.getInstance().searchList(searchkey, "1");
-//      i++;
-//    } else {
-//      data = await HttpManager.getInstance().searchList(searchkey, "2");
-//    }
+  void getMoreData(String page) async {
+    dataList.removeAt(dataList.length - 1);
+    SearchBean data =
+        await HttpManager.getInstance().searchList(searchkey, page);
 
     setState(() {
       for (int i = 0; i < data.datas.length; i++) {
         dataList.add(ListItem(data.datas[i].title, data.datas[i].link,
             data.datas[i].shareUser, data.datas[i].link));
       }
+      dataList.add(LoadMoreView());
+      isLoading=false;
     });
   }
 
@@ -63,6 +89,7 @@ class ListState extends State<ListPage> {
       body: RefreshIndicator(
         onRefresh: _onRefresh,
         child: ListView(
+          controller: _scrollController,
           children: dataList.toList(),
         ),
       ),
@@ -94,15 +121,6 @@ class ListItem extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-//              Text(
-//                title,
-//                maxLines: 1,
-//                overflow: TextOverflow.ellipsis,
-//                style: TextStyle(
-//                    fontSize: 17,
-//                    fontWeight: FontWeight.bold,
-//                    color: Colors.black),
-//              ),
             Html(
               data: title,
               defaultTextStyle: TextStyle(
@@ -124,6 +142,23 @@ class ListItem extends StatelessWidget {
               child: Divider(height: 1.0, indent: 0.0, color: Colors.grey),
             )
           ],
+        ),
+      ),
+    );
+  }
+}
+
+bool isLoading = false;
+
+class LoadMoreView extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 80,
+      child: Center(
+        child: new CircularProgressIndicator(
+          strokeWidth: 3.0,
+          valueColor: new AlwaysStoppedAnimation<Color>(Colors.red),
         ),
       ),
     );
