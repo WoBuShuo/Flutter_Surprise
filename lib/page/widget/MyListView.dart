@@ -1,20 +1,43 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class MyListView extends StatelessWidget {
+class MyListView extends StatefulWidget {
   ScrollController scrollController;
 
   List<Widget> listChild;
 
-  State _state = State.complete;
+  Function loadMoreListener;
 
-  MyListView(this.listChild, {this.scrollController, loadMoreListener()}) {
+  ListState listState;
+
+  MyListView(this.listChild, {this.scrollController,this.loadMoreListener}){
+    listState=ListState(listChild,scrollController:scrollController,loadMoreListener:loadMoreListener);
+  }
+
+  @override
+  State<StatefulWidget> createState() {
+    return listState;
+  }
+}
+
+class ListState extends State{
+
+  ScrollController scrollController;
+
+  List<Widget> listChild;
+
+  Function loadMoreListener;
+
+  LoadState _state = LoadState.complete;
+
+
+  ListState(this.listChild, {this.scrollController,this.loadMoreListener}){
     scrollController.addListener(() {
       if (scrollController.position.pixels ==
           scrollController.position.maxScrollExtent) {
-        if (_state == State.complete) {
+        if (_state == LoadState.complete) {
           loadMoreListener();
-          _state = State.loading;
+          _state = LoadState.loading;
         }
       }
     });
@@ -23,35 +46,45 @@ class MyListView extends StatelessWidget {
     }
   }
 
+  @override
+  Widget build(BuildContext context) {
+
+    return ListView(
+      controller: scrollController,
+      children: listChild.toList(),
+    );
+  }
+
   void addData(List<Widget> data) {
-    listChild.removeAt(listChild.length - 1);
-    listChild.addAll(data);
-    listChild.add(LoadMoreView());
+    setState(() {
+      if (listChild != null && listChild.length > 0) {
+        listChild.removeAt(listChild.length - 1);
+      }
+      listChild.addAll(data);
+      listChild.add(LoadMoreView());
+    });
   }
 
   void loadComplete() {
-    _state = State.complete;
+    _state = LoadState.complete;
   }
 
   void loadEnd() {
-    _state = State.end;
-    if (listChild != null && listChild.length > 0) {
-      listChild.removeAt(listChild.length - 1);
-      listChild.add(LoadEndView());
-    }
+    setState(() {
+      _state = LoadState.end;
+      if (listChild != null && listChild.length > 0) {
+        listChild.removeAt(listChild.length - 1);
+        listChild.add(LoadEndView());
+      }
+    });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return ListView(
-      controller: scrollController,
-      children: listChild,
-    );
-  }
 }
 
-enum State { loading, complete, end }
 
+enum LoadState { loading, complete, end }
+
+// 加载更多的布局
 class LoadMoreView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -67,17 +100,15 @@ class LoadMoreView extends StatelessWidget {
   }
 }
 
+//最后一页显示的布局
 class LoadEndView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
       height: 80,
-//      child: Padding(
-//        padding: EdgeInsets.only(top: 10,bottom: 10),
         child: Center(
           child: Text('没有更多数据'),
         ) ,
-//      )
     );
   }
 }

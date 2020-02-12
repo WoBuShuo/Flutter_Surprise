@@ -1,8 +1,8 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/bean/SearchBean.dart';
 import 'package:flutter_app/net/HttpManager.dart';
+import 'package:flutter_app/page/widget/MyListView.dart';
 import 'package:flutter_html/flutter_html.dart';
 
 import 'WebPage.dart';
@@ -28,54 +28,55 @@ class ListState extends State<ListPage> {
 
   List<Widget> dataList = new List();
 
-  int page=1;
+  int page = 1;
 
+  MyListView listView;
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     getSearchResult();
-    print("----");
-    _scrollController.addListener(() {
-      if (_scrollController.position.pixels ==
-          _scrollController.position.maxScrollExtent) {
-        if (!isLoading) {
-          isLoading = true;
-          page++;
-          getMoreData(page.toString());
-        }
-      }
+    listView = new MyListView(dataList, scrollController: _scrollController,
+        loadMoreListener: () {
+      page++;
+      getMoreData(page.toString());
     });
   }
 
 //  var i=0;
   void getSearchResult() async {
     dataList.clear();
-    page=1;
+    page = 1;
     SearchBean data =
         await HttpManager.getInstance().searchList(searchkey, page.toString());
+    List<Widget> widgetList = new List();
     setState(() {
       for (int i = 0; i < data.datas.length; i++) {
-        dataList.add(ListItem(data.datas[i].title, data.datas[i].link,
+        widgetList.add(ListItem(data.datas[i].title, data.datas[i].link,
             data.datas[i].shareUser, data.datas[i].link));
       }
-      dataList.add(LoadMoreView());
+      listView.listState.addData(widgetList);
+      listView.listState.loadComplete();
     });
   }
 
   void getMoreData(String page) async {
-    dataList.removeAt(dataList.length - 1);
+//    dataList.removeAt(dataList.length - 1);
+    if (this.page == 3) {
+      listView.listState.loadEnd();
+      return;
+    }
+
     SearchBean data =
         await HttpManager.getInstance().searchList(searchkey, page);
-
+    List<Widget> widgetList = new List();
     setState(() {
       for (int i = 0; i < data.datas.length; i++) {
-        dataList.add(ListItem(data.datas[i].title, data.datas[i].link,
+        widgetList.add(ListItem(data.datas[i].title, data.datas[i].link,
             data.datas[i].shareUser, data.datas[i].link));
       }
-      dataList.add(LoadMoreView());
-      isLoading=false;
+      listView.listState.addData(widgetList);
+      listView.listState.loadComplete();
     });
   }
 
@@ -86,13 +87,7 @@ class ListState extends State<ListPage> {
         title: Text('搜索'),
         automaticallyImplyLeading: true,
       ),
-      body: RefreshIndicator(
-        onRefresh: _onRefresh,
-        child: ListView(
-          controller: _scrollController,
-          children: dataList.toList(),
-        ),
-      ),
+      body: RefreshIndicator(onRefresh: _onRefresh, child: listView),
     );
   }
 
