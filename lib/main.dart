@@ -1,7 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/page/SearchPage.dart';
-import 'HomePage.dart';
+import 'package:flutter_app/page/SecondPage.dart';
+import 'page/HomePage.dart';
 
 class TabbedAppBarSample extends StatelessWidget {
   @override
@@ -142,7 +143,7 @@ class BottomState extends State<BottomWidget> {
 
   void _initData() {
     _body = new IndexedStack(
-      children: <Widget>[PagerApp(), HomePage("发现"), HomePage("我的")],
+      children: <Widget>[PagerApp(), SecondPage(), HomePage("我的")],
       index: currentIndex,
     );
   }
@@ -152,12 +153,12 @@ class BottomState extends State<BottomWidget> {
     _initData();
     return MaterialApp(
       home: Scaffold(
-          appBar:AppBar(
-            title: Text('bottom'),
-            actions: <Widget>[
-              MainIcon()
-            ],
-          ),
+//          appBar:AppBar(
+//            title: Text('首页'),
+//            actions: <Widget>[
+//              MainIcon()
+//            ],
+//          ),
           body: _body,
           bottomNavigationBar: BottomNavigationBar(
             currentIndex: currentIndex,
@@ -172,15 +173,15 @@ class BottomState extends State<BottomWidget> {
 
 }
 
-class MainIcon extends StatelessWidget{
-  @override
-  Widget build(BuildContext context) {
-
-    return  IconButton(icon: Icon(Icons.search),onPressed:(){
-      Navigator.push(context,MaterialPageRoute(builder: (context)=> SearchRoute()) );
-    },);
-  }
-}
+//class MainIcon extends StatelessWidget{
+//  @override
+//  Widget build(BuildContext context) {
+//
+//    return  IconButton(icon: Icon(Icons.search),onPressed:(){
+//      Navigator.push(context,MaterialPageRoute(builder: (context)=> SearchRoute()) );
+//    },);
+//  }
+//}
 
 
 

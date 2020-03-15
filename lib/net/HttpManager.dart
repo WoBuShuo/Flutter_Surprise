@@ -53,7 +53,7 @@ class HttpManager {
     throw Exception("server error");
   }
 
-  static Future<List<Banner>> articleList() async {
+   Future<List<Banner>> articleList() async {
     var data = await HttpManager.get("banner/json", {"page": "1"});
     List dataList = data["data"];
     return dataList.map((json) => Banner.fromJson(json)).toList();

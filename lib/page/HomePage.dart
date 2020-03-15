@@ -7,6 +7,8 @@ import 'package:flutter_app/net/HttpManager.dart';
 import 'package:flutter_app/page/WebPage.dart';
 import 'package:flutter_html/flutter_html.dart';
 
+import 'SearchPage.dart';
+
 //void main() => runApp(PagerApp());
 
 class PagerApp extends StatefulWidget {
@@ -21,8 +23,8 @@ class PagerSate extends State<PagerApp> {
   List<Widget> listItems = new List();
 
   void _loadData() async {
-    HttpManager.getInstance();
-    var data = await HttpManager.articleList();
+//    HttpManager.getInstance();
+    var data = await HttpManager.getInstance().articleList();
 
     RecommendBean recommend = await HttpManager.getInstance().recommendList();
     print("-----请求成功-------");
@@ -37,8 +39,8 @@ class PagerSate extends State<PagerApp> {
         listItems.add(new ListItem(
             recommend.datas[i].title,
             recommend.datas[i].publishTime.toString(),
-            recommend.datas[i].shareUser,recommend.datas[i].link)
-        );
+            recommend.datas[i].shareUser,
+            recommend.datas[i].link));
       }
     });
   }
@@ -52,15 +54,19 @@ class PagerSate extends State<PagerApp> {
 
   @override
   Widget build(BuildContext context) {
-    return
-      ListView(
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('首页'),
+        actions: <Widget>[MainIcon()],
+      ),
+      body: ListView(
         children: listItems.toList(),
-      );
+      ),
+    );
   }
 }
 
 class MainPagerView extends StatelessWidget {
-
   List<PagerItem> items;
 
   MainPagerView(this.items);
@@ -117,53 +123,60 @@ class ListItem extends StatelessWidget {
   String author;
   String url;
 
-  ListItem(this.title,
-      this.time,
-      this.author,
-      this.url);
+  ListItem(this.title, this.time, this.author, this.url);
 
   @override
   Widget build(BuildContext context) {
-    return
-      GestureDetector(
-        onTap: () {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => WebPage(title, url)));
-        },
-        child: Padding(
-          padding: EdgeInsets.all(10),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text(
-                title,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                    fontSize: 17,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black),
-              ),
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => WebPage(title, url)));
+      },
+      child: Padding(
+        padding: EdgeInsets.all(10),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Text(
+              title,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                  fontSize: 17,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black),
+            ),
 //            Html(
 //              data:title,
 //            ),
-              Padding(
-                  padding: EdgeInsets.only(top: 5),
-                  child: Text(
-                    author,
-                    style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.grey),
-                  )),
-              Padding(
-                padding: EdgeInsets.only(top: 12),
-                child: Divider(height: 1.0, indent: 0.0, color: Colors.grey),
-              )
-            ],
-          ),
+            Padding(
+                padding: EdgeInsets.only(top: 5),
+                child: Text(
+                  author,
+                  style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey),
+                )),
+            Padding(
+              padding: EdgeInsets.only(top: 12),
+              child: Divider(height: 1.0, indent: 0.0, color: Colors.grey),
+            )
+          ],
         ),
+      ),
+    );
+  }
+}
 
-      );
+
+
+class MainIcon extends StatelessWidget{
+  @override
+  Widget build(BuildContext context) {
+
+    return  IconButton(icon: Icon(Icons.search),onPressed:(){
+      Navigator.push(context,MaterialPageRoute(builder: (context)=> SearchRoute()) );
+    },);
   }
 }
