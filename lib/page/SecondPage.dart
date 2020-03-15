@@ -20,14 +20,9 @@ class SecondState extends State<SecondPage> {
         child: Scaffold(
             appBar: AppBar(
               title: Text('电源'),
-              bottom: TabBar(
-                tabs:tabTitleList.toList()
-              ),
+              bottom: TabBar(tabs: tabTitleList.toList()),
             ),
-            body: TabBarView(
-              children: tabViewList.toList()
-            )
-        ));
+            body: TabBarView(children: tabViewList.toList())));
   }
 
   @override
@@ -48,43 +43,77 @@ class SecondState extends State<SecondPage> {
   void _loadData() async {
     MovieBean data = await SecondHttpManager.getInstance().recommendMovie();
     setState(() {
-      print("lenght: "+data.hotPlayMovies.movies.length.toString());
-      for (int i=0; i < data.hotPlayMovies.movies.length; i++) {
-        itemList.add(MovieItem(data.hotPlayMovies.movies[i].img));
+      print("lenght: " + data.hotPlayMovies.movies.length.toString());
+      final size = MediaQuery.of(context).size;
+      final width = size.width;
+
+      for (int i = 0; i < data.hotPlayMovies.movies.length; i++) {
+        itemList.add(MovieItem(data.hotPlayMovies.movies[i]));
       }
+
+      List mobileItemList = List<MovieItem>();
+//      for(int i=0;i<data.mobilemoviecoming.mobilemoviecoming.moviecomings.length;i++){
+//        mobileItemList.add()
+//      }
+
       tabTitleList.add(Tab(text: '正在热映'));
       tabTitleList.add(Tab(text: '即将上映'));
+
       tabViewList.add(TabItem(itemList));
       tabViewList.add(TabItem(itemList));
     });
   }
 }
 
-
 class TabItem extends StatelessWidget {
   List<MovieItem> _itemList;
+
   TabItem(this._itemList);
+
   @override
   Widget build(BuildContext context) {
-    return GridView.count(
-      crossAxisCount: 2,
-      crossAxisSpacing: 10,
-      children: _itemList.toList(),
+    return Padding(
+      padding: EdgeInsets.all(10),
+      child: GridView.count(
+        crossAxisCount: 2,
+        mainAxisSpacing: 10,
+        crossAxisSpacing: 10,
+        childAspectRatio: 0.60,
+        children: _itemList.toList(),
+      ),
     );
   }
-
 }
 
 class MovieItem extends StatelessWidget {
-  String url;
+  Movy movy;
 
-  MovieItem(this.url);
+  MovieItem(this.movy);
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 300,
-      child: Image.network(url),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Expanded(
+          child: Image.network(
+            movy.img,
+            fit: BoxFit.fitWidth,
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.only(top: 4),
+          child: Text(
+            movy.titleCn,
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.only(bottom: 0),
+          child:  Text('豆瓣评分：' + movy.ratingFinal, style: TextStyle(fontSize: 13))
+          ,
+        ),
+      ],
     );
   }
 }
