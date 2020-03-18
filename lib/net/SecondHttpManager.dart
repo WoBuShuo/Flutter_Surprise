@@ -24,40 +24,53 @@ class SecondHttpManager {
     dio.options.receiveTimeout = 8000;
   }
 
-  static Future<Map<String, dynamic>> get(
-      String path, Map<String, dynamic> map) async {
-    var response = await getInstance().dio.get(path, queryParameters: map);
-    return processResponse(response);
-  }
 
-  static Future post(
-      String path, Map<String, dynamic> map) async {
-    var response = await getInstance().dio.post(path,
-        data: map,
-        options: Options(
-            contentType: "application/x-www-form-urlencoded",
-            headers: {"Content-Type": "application/x-www-form-urlencoded"}));
-    return processResponse(response);
-  }
 
-  static Future processResponse(Response response) async {
+  void processResponse(String url,
+      {Map<String, dynamic> params,
+      String method,
+      Function onSuccess,
+      Function onFailed}) async {
+    Response response;
+    //默认是post请求
+    if (method==null || method == "post") {
+      if (params != null && params.isNotEmpty) {
+        response = await dio.get(url, queryParameters: params);
+      } else {
+        response = await dio.get(url);
+      }
+    } else {
+      if (params != null && params.isNotEmpty) {
+        response = await dio.post(url, data: params);
+      } else {
+        response = await dio.post(url);
+      }
+    }
+
     if (response.statusCode == 200) {
       var data = response.data;
       String code = data["code"];
       String msg = data["msg"];
       if (code == "1") {
         //请求响应成功
-        return data;
+        onSuccess(data);
+        return
+            ;
       }
       throw Exception(msg);
     }
     throw Exception("server error");
   }
 
-  Future<MovieBean> recommendMovie() async {
-    var data = await SecondHttpManager.post("top/movies.api?locationId=366", {"k": ""});
-    var dataList = data["data"];
-    return  MovieBean.fromJson(dataList);
-  }
+  void recommendMovie({Function onSuccess, Function onFailed}) {
+    processResponse("top/movies.api?locationId=366",
+        onSuccess: (data) {
+          var dataList = data["data"];
+          MovieBean bean=MovieBean.fromJson(dataList);
+          print(bean.hotPlayMovies.movies.length.toString());
+          onSuccess(bean);
+        }, onFailed: () {
 
+        });
+  }
 }

@@ -12,10 +12,22 @@ class MovieDetailsState extends State<MovieDetailsPage>{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
+      appBar: AppBar(title: Text('看看'),),
+      body: ListView(
+        children: <Widget>[],
+      ),
     );
   }
 
+}
+
+
+class MovieIntroduction extends StatelessWidget{
+  @override
+  Widget build(BuildContext context) {
+
+    return null;
+  }
 }
 
 

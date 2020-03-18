@@ -41,27 +41,29 @@ class SecondState extends State<SecondPage> {
   List tabTitleList = List<Widget>();
 
   void _loadData() async {
-    MovieBean data = await SecondHttpManager.getInstance().recommendMovie();
-    setState(() {
-      print("lenght: " + data.hotPlayMovies.movies.length.toString());
-      final size = MediaQuery.of(context).size;
-      final width = size.width;
+    SecondHttpManager.getInstance().recommendMovie(onSuccess: (data) {
+      setState(() {
+        print("lenght: " + data.hotPlayMovies.movies.length.toString());
+        final size = MediaQuery.of(context).size;
+        final width = size.width;
 
-      for (int i = 0; i < data.hotPlayMovies.movies.length; i++) {
-        itemList.add(MovieItem(data.hotPlayMovies.movies[i]));
-      }
+        for (int i = 0; i < data.hotPlayMovies.movies.length; i++) {
+          itemList.add(MovieItem(data.hotPlayMovies.movies[i]));
+        }
 
-      List mobileItemList = List<MovieItem>();
+        List mobileItemList = List<MovieItem>();
 //      for(int i=0;i<data.mobilemoviecoming.mobilemoviecoming.moviecomings.length;i++){
 //        mobileItemList.add()
 //      }
 
-      tabTitleList.add(Tab(text: '正在热映'));
-      tabTitleList.add(Tab(text: '即将上映'));
+        tabTitleList.add(Tab(text: '正在热映'));
+        tabTitleList.add(Tab(text: '即将上映'));
 
-      tabViewList.add(TabItem(itemList));
-      tabViewList.add(TabItem(itemList));
+        tabViewList.add(TabItem(itemList));
+        tabViewList.add(TabItem(itemList));
+      });
     });
+//    MovieBean data = await SecondHttpManager.getInstance().recommendMovie();
   }
 }
 
@@ -110,8 +112,8 @@ class MovieItem extends StatelessWidget {
         ),
         Padding(
           padding: EdgeInsets.only(bottom: 0),
-          child:  Text('豆瓣评分：' + movy.ratingFinal, style: TextStyle(fontSize: 13))
-          ,
+          child:
+              Text('豆瓣评分：' + movy.ratingFinal, style: TextStyle(fontSize: 13)),
         ),
       ],
     );
