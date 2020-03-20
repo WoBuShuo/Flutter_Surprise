@@ -2,11 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/bean/MovieBean.dart';
 import 'package:flutter_app/net/SecondHttpManager.dart';
+import 'package:flutter_app/page/MovieDetailsPage.dart';
 
 class SecondPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    // TODO: implement createState
     return SecondState();
   }
 }
@@ -94,28 +94,34 @@ class MovieItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Expanded(
-          child: Image.network(
-            movy.img,
-            fit: BoxFit.fitWidth,
-          ),
-        ),
-        Padding(
-          padding: EdgeInsets.only(top: 4),
-          child: Text(
-            movy.titleCn,
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-          ),
-        ),
-        Padding(
-          padding: EdgeInsets.only(bottom: 0),
-          child:
+    return
+      GestureDetector(
+        onTap: (){
+          Navigator.push(context, MaterialPageRoute(builder: (content)=>MovieDetailsPage()));
+        },
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Expanded(
+              child: Image.network(
+                movy.img,
+                fit: BoxFit.fitWidth,
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 4),
+              child: Text(
+                movy.titleCn,
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(bottom: 0),
+              child:
               Text('豆瓣评分：' + movy.ratingFinal, style: TextStyle(fontSize: 13)),
-        ),
-      ],
-    );
+            ),
+          ],
+        ) ,
+      );
   }
 }
