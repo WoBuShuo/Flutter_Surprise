@@ -1,16 +1,42 @@
+import 'package:flutter_app/bean/MovieMessageBean.dart';
+import 'package:flutter_app/net/SecondHttpManager.dart';
 import 'package:widget_chain/widget_chain.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class MovieDetailsPage extends StatefulWidget{
+
+  String movieID;
+  MovieDetailsPage(this.movieID);
+
+
   @override
   State<StatefulWidget> createState() {
-    return MovieDetailsState();
+    return MovieDetailsState(movieID);
   }
 }
 
 class MovieDetailsState extends State<MovieDetailsPage> {
+  String movieID;
+  MovieDetailsState(this.movieID);
+
+
+  @override
+  void initState() {
+    super.initState();
+    SecondHttpManager.getInstance().movieMessage(movieID,onSuccess: (data) {
+     var bean=data as MovieMessageBean;
+      print(bean.playState.toString());
+
+      setState((){
+
+      });
+    });
+
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,6 +53,7 @@ class MovieDetailsState extends State<MovieDetailsPage> {
     return Padding(
       padding: EdgeInsets.all(20),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Row(
             crossAxisAlignment: CrossAxisAlignment.end,
@@ -53,9 +80,6 @@ class MovieDetailsState extends State<MovieDetailsPage> {
                 ]
               )),
 
-//              ActionChip(
-//                label: Text(''),
-//              ).intoContainer(height: 30).intoExpanded(),
               FlatButton.icon(label: Text('俊俊'),icon: Icon(Icons.print),
                 color:Colors.grey ,
                 shape: StadiumBorder(),
@@ -70,7 +94,19 @@ class MovieDetailsState extends State<MovieDetailsPage> {
               },).intoContainer(height: 30,padding:EdgeInsets.only(left: 20) ).intoExpanded(),
 
             ],
-          ).intoPadding(padding: EdgeInsets.only(top: 13))
+          ).intoPadding(padding: EdgeInsets.only(top: 13)),
+          Text('简介',style: TextStyle(color:Colors.black ,fontWeight: FontWeight.bold,fontSize: 18)).intoPadding(padding: EdgeInsets.only(top:10)),
+          Text("因故来到美国唐人街的叶问，意外卷入一场当地军方势力与华人武馆的纠纷，面对日益猖狂的民族歧视与压迫，叶问挺身而出，在美国海军陆战队军营拼死一战，以正宗咏春，向世界证明了中国功夫"),
+          Text('演职人员',style: TextStyle(color:Colors.black ,fontWeight: FontWeight.bold,fontSize: 18)).intoPadding(padding: EdgeInsets.only(top:10)),
+          ListView(
+            scrollDirection: Axis.horizontal,
+            children: <Widget>[
+              Image.network("http://bj.people.com.cn//NMediaFile/2020/0313/LOCAL202003131750545452283166310.jpg",width: 85,height: 105,),
+              Image.network("http://bj.people.com.cn//NMediaFile/2020/0313/LOCAL202003131750545452283166310.jpg",width: 85,height: 105,),
+              Image.network("http://bj.people.com.cn//NMediaFile/2020/0313/LOCAL202003131750545452283166310.jpg",width: 85,height: 105,),
+              Image.network("http://bj.people.com.cn//NMediaFile/2020/0313/LOCAL202003131750545452283166310.jpg",width: 85,height: 105,),
+            ],
+          ).intoContainer(height: 110)
         ],
       ) ,
     );

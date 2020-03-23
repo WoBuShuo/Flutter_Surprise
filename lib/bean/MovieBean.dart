@@ -66,7 +66,7 @@ class Movy {
     bool isIMAX3D;
     bool isNew;
     int length;
-    int movieId;
+    String movieId;
     NearestShowtime nearestShowtime;
     bool preferentialFlag;
     int rDay;
@@ -96,7 +96,7 @@ class Movy {
             isIMAX3D: json['isIMAX3D'],
             isNew: json['isNew'],
             length: json['length'],
-            movieId: json['movieId'],
+            movieId: json['movieId'].toString(),
             nearestShowtime: json['nearestShowtime'] != null ? NearestShowtime.fromJson(json['nearestShowtime']) : null,
             preferentialFlag: json['preferentialFlag'],
             rDay: json['rDay'],

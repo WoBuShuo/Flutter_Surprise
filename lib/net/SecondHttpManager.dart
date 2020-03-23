@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_app/bean/Banner.dart';
 import 'package:flutter_app/bean/HotBean.dart';
 import 'package:flutter_app/bean/MovieBean.dart';
+import 'package:flutter_app/bean/MovieMessageBean.dart';
 import 'package:flutter_app/bean/RecommendBean.dart';
 import 'package:flutter_app/bean/SearchBean.dart';
 
@@ -67,10 +68,24 @@ class SecondHttpManager {
         onSuccess: (data) {
           var dataList = data["data"];
           MovieBean bean=MovieBean.fromJson(dataList);
-          print(bean.hotPlayMovies.movies.length.toString());
           onSuccess(bean);
         }, onFailed: () {
 
         });
   }
+
+
+  void movieMessage(String id,{Function onSuccess, Function onFailed}){
+    processResponse("movie/detail.api?locationId=366&movieId="+id,
+        onSuccess: (data) {
+          var dataList = data["data"];
+          MovieMessageBean bean=MovieMessageBean.fromJson(dataList);
+          onSuccess(bean);
+        }, onFailed: () {
+
+        });
+  }
+
+
+
 }
