@@ -5,6 +5,7 @@ import 'package:flutter_app/bean/MovieBean.dart';
 import 'package:flutter_app/bean/MovieMessageBean.dart';
 import 'package:flutter_app/bean/RecommendBean.dart';
 import 'package:flutter_app/bean/SearchBean.dart';
+import 'package:flutter_app/bean/TidbitsBean.dart';
 
 class SecondHttpManager {
   static SecondHttpManager _httpManager;
@@ -86,6 +87,15 @@ class SecondHttpManager {
         });
   }
 
+  void movieTidbits(String id,{Function onSuccess, Function onFailed}){
+    processResponse("movie/category/video.api?type=-1&pageIndex=1&movieId="+id,
+        onSuccess: (data) {
+          var dataList = data["data"];
+          TidbitsBean bean=TidbitsBean.fromJson(dataList);
+          onSuccess(bean);
+        }, onFailed: () {
 
+        });
+  }
 
 }

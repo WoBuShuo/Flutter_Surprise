@@ -1,4 +1,6 @@
+import 'package:flutter_app/bean/MovieDetailBean.dart';
 import 'package:flutter_app/bean/MovieMessageBean.dart';
+import 'package:flutter_app/bean/TidbitsBean.dart';
 import 'package:flutter_app/net/SecondHttpManager.dart';
 import 'package:widget_chain/widget_chain.dart';
 
@@ -7,28 +9,35 @@ import 'package:flutter/material.dart';
 
 class MovieDetailsPage extends StatefulWidget {
   String movieID;
-
-  MovieDetailsPage(this.movieID);
+  String title;
+  MovieDetailsPage(this.movieID,this.title);
 
   @override
   State<StatefulWidget> createState() {
-    return MovieDetailsState(movieID);
+    return MovieDetailsState(movieID,title);
   }
 }
 
 class MovieDetailsState extends State<MovieDetailsPage> {
   String movieID;
 
-  MovieDetailsState(this.movieID);
+  String title;
+  MovieMessageBean _messageBean;
+  TidbitsBean _tidbitsBean;
+  MovieDetailsState(this.movieID,this.title);
 
   @override
   void initState() {
     super.initState();
     SecondHttpManager.getInstance().movieMessage(movieID, onSuccess: (data) {
-      var bean = data as MovieMessageBean;
-      print(bean.playState.toString());
-
-      setState(() {});
+      setState(() {
+        _messageBean = data as MovieMessageBean;
+      });
+    });
+    SecondHttpManager.getInstance().movieTidbits(movieID, onSuccess: (data) {
+      setState(() {
+        _tidbitsBean = data as TidbitsBean;
+      });
     });
   }
 
@@ -36,17 +45,22 @@ class MovieDetailsState extends State<MovieDetailsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('看看'),
+        title: Text(title),
       ),
       body: ListView(
         children: <Widget>[
-          headItem(),
+          headItem(_messageBean),
+          subtitleText('预告片与花絮').intoPadding(padding: EdgeInsets.only(top: 10)),
+          tidbits(),
         ],
       ),
     );
   }
 
-  Padding headItem() {
+  Padding headItem(MovieMessageBean messageBean) {
+    if (messageBean == null) {
+      return Padding(padding: EdgeInsets.all(10));
+    }
     return Padding(
       padding: EdgeInsets.all(20),
       child: Column(
@@ -55,28 +69,34 @@ class MovieDetailsState extends State<MovieDetailsPage> {
           Row(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: <Widget>[
+//              NetworkImage
               Image.network(
-                "http://bj.people.com.cn//NMediaFile/2020/0313/LOCAL202003131750545452283166310.jpg",
+                messageBean.basic.img,
                 height: 150,
                 width: 110,
-              ),
+              ).intoClipRRect(borderRadius: BorderRadius.circular(6)),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
-                    '叶问',
+                    messageBean.basic.name,
                     style: TextStyle(
                         color: Colors.black,
-                        fontSize: 24,
+                        fontSize: 18,
                         fontWeight: FontWeight.bold),
                   ),
-                  Text('动作/历史/剧情')
-                      .intoContainer(margin: EdgeInsets.only(top: 10)),
                   Text(
-                    '甄子丹过招美军',
+                    messageBean.basic.nameEn,
+                    style: TextStyle(fontSize: 11),
+                  ).intoContainer(margin: EdgeInsets.only(top: 2)),
+                  Text(movieType() + "•" + messageBean.basic.mins,
+                          style: TextStyle(fontSize: 11))
+                      .intoContainer(margin: EdgeInsets.only(top: 9)),
+                  Text(
+                    messageBean.basic.commentSpecial,
                     style: TextStyle(
                         color: Colors.black54,
-                        fontSize: 20,
+                        fontSize: 15,
                         fontWeight: FontWeight.bold),
                   ).intoContainer(margin: EdgeInsets.only(top: 10))
                 ],
@@ -88,20 +108,20 @@ class MovieDetailsState extends State<MovieDetailsPage> {
               Text.rich(TextSpan(children: [
                 TextSpan(text: '时光评分', style: TextStyle(color: Colors.cyan)),
                 TextSpan(
-                    text: '7.7',
+                    text: messageBean.basic.overallRating,
                     style: TextStyle(
                         color: Colors.cyan,
                         fontWeight: FontWeight.bold,
                         fontSize: 30))
               ])),
               FlatButton.icon(
-                label: Text('俊俊'),
+                label: Text('看过'),
                 icon: new Image.asset(
                   'image/icon_bool.png',
                   width: 23,
                   height: 23,
                 ),
-                color: Colors.grey,
+                color: Colors.red,
                 shape: StadiumBorder(),
                 onPressed: () {
                   print(AssetImage('image/icon_bool.png'));
@@ -110,12 +130,11 @@ class MovieDetailsState extends State<MovieDetailsPage> {
                   .intoContainer(height: 30, padding: EdgeInsets.only(left: 20))
                   .intoExpanded(),
               FlatButton.icon(
-                label: Text('俊俊'),
+                label: Text('想看'),
                 icon: Icon(
                   Icons.add_box,
-                  color: Colors.red,
                 ),
-                color: Colors.grey,
+                color: Colors.blue,
                 shape: StadiumBorder(),
                 onPressed: () {},
               )
@@ -123,47 +142,86 @@ class MovieDetailsState extends State<MovieDetailsPage> {
                   .intoExpanded(),
             ],
           ).intoPadding(padding: EdgeInsets.only(top: 13)),
-          Text('简介',
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18))
+          subtitleText('简介').intoPadding(padding: EdgeInsets.only(top: 10)),
+          Text(messageBean.basic.story)
               .intoPadding(padding: EdgeInsets.only(top: 10)),
-          Text(
-              "因故来到美国唐人街的叶问，意外卷入一场当地军方势力与华人武馆的纠纷，面对日益猖狂的民族歧视与压迫，叶问挺身而出，在美国海军陆战队军营拼死一战，以正宗咏春，向世界证明了中国功夫"),
-          Text('演职人员',
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18))
-              .intoPadding(padding: EdgeInsets.only(top: 10)),
+          subtitleText('演职人员').intoPadding(padding: EdgeInsets.only(top: 10)),
           ListView(
             scrollDirection: Axis.horizontal,
-            children: <Widget>[
-              Image.network(
-                "http://bj.people.com.cn//NMediaFile/2020/0313/LOCAL202003131750545452283166310.jpg",
-                width: 85,
-                height: 105,
-              ),
-              Image.network(
-                "http://bj.people.com.cn//NMediaFile/2020/0313/LOCAL202003131750545452283166310.jpg",
-                width: 85,
-                height: 105,
-              ),
-              Image.network(
-                "http://bj.people.com.cn//NMediaFile/2020/0313/LOCAL202003131750545452283166310.jpg",
-                width: 85,
-                height: 105,
-              ),
-              Image.network(
-                "http://bj.people.com.cn//NMediaFile/2020/0313/LOCAL202003131750545452283166310.jpg",
-                width: 85,
-                height: 105,
-              ),
-            ],
-          ).intoContainer(height: 110)
+            children: performanceList().toList(),
+          ).intoContainer(height: 145, margin: EdgeInsets.only(top: 10))
         ],
       ),
     );
+  }
+
+  ///演员列表
+  List<Widget> performanceList() {
+    List<Widget> list = new List();
+    for (int i = 0; i < _messageBean.basic.actors.length; i++) {
+      list.add(Column(
+        children: <Widget>[
+          Expanded(
+            child: Image.network(
+              _messageBean.basic.actors[i].img,
+            ).intoClipRRect(borderRadius: BorderRadius.circular(5)),
+          ),
+          Text(
+            _messageBean.basic.actors[i].name,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              fontSize: 11,
+            ),
+          ).intoPadding(padding: EdgeInsets.only(top: 4, left: 2, right: 2)),
+          Text(
+            _messageBean.basic.actors[i].nameEn,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(color: Colors.grey, fontSize: 10),
+          ).intoPadding(padding: EdgeInsets.only(top: 4, left: 2, right: 2)),
+          Text("饰  " + _messageBean.basic.actors[i].roleName,
+              style: TextStyle(color: Colors.grey, fontSize: 10)),
+        ],
+      ).intoContainer(width: 80, margin: EdgeInsets.only(right: 4)));
+    }
+    return list;
+  }
+
+  ///拼接电源的类型
+  String movieType() {
+    StringBuffer type = new StringBuffer();
+    for (int i = 0; i < _messageBean.basic.type.length; i++) {
+      type.write(_messageBean.basic.type[i]);
+      if (i != _messageBean.basic.type.length - 1) {
+        type.write("/");
+      }
+    }
+    return type.toString();
+  }
+
+  Text subtitleText(String title) {
+    return Text(title,
+        style: TextStyle(
+            color: Colors.black, fontWeight: FontWeight.bold, fontSize: 14));
+  }
+
+  /// 花絮widget
+  Widget tidbits() {
+    if(_tidbitsBean==null){
+      return Container();
+    }
+
+    List<Widget> item=new List();
+    for(int i=0;i<_tidbitsBean.videoList.length;i++){
+      item.add(Container(
+        child: Image.network(_tidbitsBean.videoList[i].image),
+      ));
+    }
+
+    return ListView(
+      scrollDirection: Axis.horizontal,
+      children: item.toList(),
+    ).intoContainer(height: 100);
   }
 }

@@ -97,7 +97,7 @@ class MovieItem extends StatelessWidget {
     return
       GestureDetector(
         onTap: (){
-          Navigator.push(context, MaterialPageRoute(builder: (content)=>MovieDetailsPage(movy.movieId)));
+          Navigator.push(context, MaterialPageRoute(builder: (content)=>MovieDetailsPage(movy.movieId,movy.titleCn)));
         },
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
