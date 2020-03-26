@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_app/bean/Banner.dart';
 import 'package:flutter_app/bean/HotBean.dart';
 import 'package:flutter_app/bean/MovieBean.dart';
+import 'package:flutter_app/bean/MovieCommentaryBean.dart';
 import 'package:flutter_app/bean/MovieMessageBean.dart';
 import 'package:flutter_app/bean/RecommendBean.dart';
 import 'package:flutter_app/bean/SearchBean.dart';
@@ -30,9 +31,9 @@ class SecondHttpManager {
 
   void processResponse(String url,
       {Map<String, dynamic> params,
-      String method,
-      Function onSuccess,
-      Function onFailed}) async {
+        String method,
+        Function onSuccess,
+        Function onFailed}) async {
     Response response;
     //默认是post请求
     if (method==null || method == "post") {
@@ -57,7 +58,7 @@ class SecondHttpManager {
         //请求响应成功
         onSuccess(data);
         return
-            ;
+          ;
       }
       throw Exception(msg);
     }
@@ -97,5 +98,14 @@ class SecondHttpManager {
 
         });
   }
+  void movieCommentary(String id,{Function onSuccess, Function onFailed}){
+    processResponse("movie/hotComment201905.api?movieId="+id,
+        onSuccess: (data) {
+          var dataList = data["data"];
+          MovieCommentaryBean bean=MovieCommentaryBean.fromJson(dataList);
+          onSuccess(bean);
+        }, onFailed: () {
 
+        });
+  }
 }
