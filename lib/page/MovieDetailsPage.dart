@@ -74,6 +74,12 @@ class MovieDetailsState extends State<MovieDetailsPage> {
       for (int i = 0; i < commentaryList.length; i++) {
         dataList.add(commentaryList[i]);
       }
+      dataList.add(
+          subtitleText('影评').intoPadding(padding: EdgeInsets.only(top: 10)));
+      List<Widget> longCommentaryList = longCommentary();
+      for (int i = 0; i < longCommentaryList.length; i++) {
+        dataList.add(longCommentaryList[i]);
+      }
     }
   }
 
@@ -248,13 +254,14 @@ class MovieDetailsState extends State<MovieDetailsPage> {
         children: <Widget>[
           Image.network(
             _tidbitsBean.videoList[i].image,
-            fit: BoxFit.cover,
+            fit: BoxFit.contain,
           ),
+          Container(color: Color(0x552D2D2D),),
           Text(
             _tidbitsBean.videoList[i].title,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: TextStyle(),
+            style: TextStyle(color: Colors.white,fontSize: 11),
           )
         ],
       ).intoContainer(width: 130, margin: EdgeInsets.only(right: 5)));
@@ -265,6 +272,7 @@ class MovieDetailsState extends State<MovieDetailsPage> {
     ).intoContainer(height: 80, margin: EdgeInsets.only(top: 5));
   }
 
+  ///短评
   List<Widget> shortCommentary() {
     List<Widget> list = new List();
     for (int i = 0; i < _commentaryBean.mini.list.length; i++) {
@@ -291,30 +299,60 @@ class MovieDetailsState extends State<MovieDetailsPage> {
               .intoPadding(padding: EdgeInsets.only(left: 30, top: 10)),
           Row(
             children: <Widget>[
-              FlatButton.icon(
-                label: Text('0'),
-                icon:Icon(Icons.nature),
-                shape: StadiumBorder(),
-                onPressed: () {
-                },
-
+              Image.asset("image/common_icon_reply.png", width: 13, height: 13),
+              Text(item.replyCount.toString())
+                  .intoContainer(margin: EdgeInsets.only(left: 10, right: 15)),
+              Image.asset(
+                "image/common_icon_thumb_up.png",
+                width: 13,
+                height: 13,
               ),
-    FlatButton.icon(
-    label: Text('0'),
-    icon:ImageIcon( image:Icon(Icons.headset)),
-    shape: StadiumBorder(),
-    onPressed: () {
-    },)
+              Text(item.praiseCount.toString()).intoContainer(margin: EdgeInsets.only(left: 10)),
             ],
-          ),
-          Container(
-            width: double.infinity,
-            height: 1.0,
+          ).intoPadding(padding: EdgeInsets.only(left: 30, top: 10)),
+          Divider(
             color: Color(0xFFF3F3F3),
-            margin: EdgeInsets.only(top: 13),
-          ),
+          )
         ],
       ).intoContainer(margin: EdgeInsets.only(top: 15)));
+    }
+    return list;
+  }
+
+  ///长评
+  List<Widget> longCommentary() {
+    List<Widget> list = new List();
+    for (int i = 0; i < _commentaryBean.plus.list.length; i++) {
+      PlusItem item = _commentaryBean.plus.list[i];
+      list.add(Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              CircleAvatar(
+                backgroundImage: NetworkImage(item.headImg),
+              ).intoContainer(width: 23, height: 23),
+              Text.rich(TextSpan(children: [
+                TextSpan(text: item.nickname),
+                TextSpan(
+                    text: " • " + RelativeDateFormat.format(item.commentDate),
+                    style: TextStyle(color: Colors.grey))
+              ])).intoPadding(padding: EdgeInsets.only(left: 10))
+//              Text(item.nickname+" • "+RelativeDateFormat.format(item.commentDate)).intoPadding(padding: EdgeInsets.only(left: 13)),
+            ],
+          ),
+          Divider(color: Color(0xFFE0DFDF),),
+          Text(item.title,style: TextStyle(color: Colors.black,fontSize: 15),).intoPadding(padding: EdgeInsets.only(top: 10)),
+          Text(item.content,style: TextStyle(color: Colors.grey,fontSize: 12),).intoPadding(padding: EdgeInsets.only(top: 12)),
+          Row(
+            children: <Widget>[
+              Image.asset("image/common_icon_reply.png", width: 13, height: 13),
+              Text(item.replyCount.toString())
+                  .intoContainer(margin: EdgeInsets.only(left: 10, right: 15)),
+            ],
+          ).intoPadding(padding: EdgeInsets.only(top: 15))
+        ],
+      ).intoContainer(padding:EdgeInsets.only(left: 15,top: 13,bottom: 13) ,margin: EdgeInsets.only(top:20),decoration: BoxDecoration(color: Color(0xFFEBEBEB))));
     }
     return list;
   }
