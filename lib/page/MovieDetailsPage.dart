@@ -250,21 +250,32 @@ class MovieDetailsState extends State<MovieDetailsPage> {
     List<Widget> item = new List();
     for (int i = 0; i < _tidbitsBean.videoList.length; i++) {
       item.add(Stack(
-        alignment: Alignment(0, 1),
+//        alignment: Alignment(0, 1),
         children: <Widget>[
           Image.network(
             _tidbitsBean.videoList[i].image,
-            fit: BoxFit.contain,
+            fit: BoxFit.cover,
+              width: double.infinity,
+              height: double.infinity
           ),
-          Container(color: Color(0x552D2D2D),),
-          Text(
-            _tidbitsBean.videoList[i].title,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(color: Colors.white,fontSize: 11),
+          Container(color: Color(0x332D2D2D),),
+          Positioned(
+            top: 62,
+            left: 3,
+            child: Image.asset('image/common_icon_play_small.png',width: 15,height: 15,),
+          ),
+          Positioned(
+            top:64,
+            left: 21,
+            child: Text(
+              _tidbitsBean.videoList[i].title,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(color: Colors.white,fontSize: 11),
+            ) ,
           )
         ],
-      ).intoContainer(width: 130, margin: EdgeInsets.only(right: 5)));
+      ).intoContainer(width: 140, margin: EdgeInsets.only(right: 5)));
     }
     return ListView(
       scrollDirection: Axis.horizontal,

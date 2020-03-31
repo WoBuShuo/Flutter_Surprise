@@ -54,6 +54,7 @@ flutter:
     - image/icon_bool.png
     - image/common_icon_reply.png
     - image/common_icon_thumb_up.png
+    - image/common_icon_play_small.png
   # To add assets to your application, add an assets section, like this:
   # assets:
   #  - images/a_dot_burr.jpeg
