@@ -4,6 +4,7 @@ import 'package:flutter_app/bean/HotBean.dart';
 import 'package:flutter_app/bean/MovieBean.dart';
 import 'package:flutter_app/bean/MovieCommentaryBean.dart';
 import 'package:flutter_app/bean/MovieMessageBean.dart';
+import 'package:flutter_app/bean/PlayUrlBean.dart';
 import 'package:flutter_app/bean/RecommendBean.dart';
 import 'package:flutter_app/bean/SearchBean.dart';
 import 'package:flutter_app/bean/TidbitsBean.dart';
@@ -52,7 +53,7 @@ class SecondHttpManager {
 
     if (response.statusCode == 200) {
       var data = response.data;
-      String code = data["code"];
+      String code = data["code"].toString();
       String msg = data["msg"];
       if (code == "1") {
         //请求响应成功
@@ -108,4 +109,22 @@ class SecondHttpManager {
 
         });
   }
+
+  void getMovieUrl(String id,{Function onSuccess, Function onFailed}){
+      dio.options.baseUrl="https://shortvideo.mtime.cn/";
+
+      processResponse("play/getPlayUrl?videoId="+id+"&scheme=http&source=1",
+          onSuccess: (data) {
+            var dataList = data["data"];
+            PlayUrlBean bean=PlayUrlBean.fromJson(dataList);
+            onSuccess(bean);
+
+            dio.options.baseUrl = "https://ticket-api-m.mtime.cn/";
+          }, onFailed: () {
+            dio.options.baseUrl = "https://ticket-api-m.mtime.cn/";
+          });
+
+  }
+
+
 }

@@ -3,6 +3,7 @@ import 'package:flutter_app/bean/MovieDetailBean.dart';
 import 'package:flutter_app/bean/MovieMessageBean.dart';
 import 'package:flutter_app/bean/TidbitsBean.dart';
 import 'package:flutter_app/net/SecondHttpManager.dart';
+import 'package:flutter_app/page/VideoPage.dart';
 import 'package:flutter_app/util/RelativeDateFormat.dart';
 import 'package:widget_chain/widget_chain.dart';
 
@@ -249,33 +250,38 @@ class MovieDetailsState extends State<MovieDetailsPage> {
 
     List<Widget> item = new List();
     for (int i = 0; i < _tidbitsBean.videoList.length; i++) {
-      item.add(Stack(
+      item.add(GestureDetector(
+        onTap: (){
+          Navigator.push(context, MaterialPageRoute(builder: (context)=>VideoPage(_tidbitsBean.videoList[i].vId.toString())));
+        },
+        child: Stack(
 //        alignment: Alignment(0, 1),
-        children: <Widget>[
-          Image.network(
-            _tidbitsBean.videoList[i].image,
-            fit: BoxFit.cover,
-              width: double.infinity,
-              height: double.infinity
-          ),
-          Container(color: Color(0x332D2D2D),),
-          Positioned(
-            top: 62,
-            left: 3,
-            child: Image.asset('image/common_icon_play_small.png',width: 15,height: 15,),
-          ),
-          Positioned(
-            top:64,
-            left: 21,
-            child: Text(
-              _tidbitsBean.videoList[i].title,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(color: Colors.white,fontSize: 11),
-            ) ,
-          )
-        ],
-      ).intoContainer(width: 140, margin: EdgeInsets.only(right: 5)));
+          children: <Widget>[
+            Image.network(
+                _tidbitsBean.videoList[i].image,
+                fit: BoxFit.cover,
+                width: double.infinity,
+                height: double.infinity
+            ),
+            Container(color: Color(0x332D2D2D),),
+            Positioned(
+              top: 62,
+              left: 3,
+              child: Image.asset('image/common_icon_play_small.png',width: 15,height: 15,),
+            ),
+            Positioned(
+              top:64,
+              left: 21,
+              child: Text(
+                _tidbitsBean.videoList[i].title,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(color: Colors.white,fontSize: 11),
+              ) ,
+            )
+          ],
+        ).intoContainer(width: 140, margin: EdgeInsets.only(right: 5)),
+      ));
     }
     return ListView(
       scrollDirection: Axis.horizontal,
@@ -363,7 +369,7 @@ class MovieDetailsState extends State<MovieDetailsPage> {
             ],
           ).intoPadding(padding: EdgeInsets.only(top: 15))
         ],
-      ).intoContainer(padding:EdgeInsets.only(left: 15,top: 13,bottom: 13) ,margin: EdgeInsets.only(top:20),decoration: BoxDecoration(color: Color(0xFFEBEBEB))));
+      ).intoContainer(padding:EdgeInsets.only(left: 15,top: 13,bottom: 13) ,margin: EdgeInsets.only(top:20),decoration: BoxDecoration(color: Color(0xFFEBEBEB),borderRadius: BorderRadius.circular(6))));
     }
     return list;
   }
