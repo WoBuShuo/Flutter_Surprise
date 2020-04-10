@@ -52,7 +52,8 @@ flutter:
   assets:
     - image/first_fragment_bg.png
     - image/top_bg.jpg
-    - image/icon_bool.png
+    - movie_details_ic_seen.png
+    - movie_details_ic_want.png
     - image/common_icon_reply.png
     - image/common_icon_thumb_up.png
     - image/common_icon_play_small.png

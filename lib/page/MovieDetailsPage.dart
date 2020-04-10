@@ -154,24 +154,24 @@ class MovieDetailsState extends State<MovieDetailsPage> {
             FlatButton.icon(
               label: Text('看过'),
               icon: new Image.asset(
-                'image/icon_bool.png',
+                'image/movie_details_ic_seen.png',
                 width: 23,
                 height: 23,
               ),
-              color: Colors.red,
+              color: Color(0xFFD3D3D3),
               shape: StadiumBorder(),
               onPressed: () {
-                print(AssetImage('image/icon_bool.png'));
+//                print(AssetImage('image/icon_bool.png'));
               },
             )
                 .intoContainer(height: 30, padding: EdgeInsets.only(left: 20))
                 .intoExpanded(),
             FlatButton.icon(
               label: Text('想看'),
-              icon: Icon(
-                Icons.add_box,
-              ),
-              color: Colors.blue,
+              icon:Image.asset('image/movie_details_ic_want.png',
+                width: 23,
+                height: 23,),
+              color: Color(0xFFD3D3D3),
               shape: StadiumBorder(),
               onPressed: () {},
             )
@@ -252,7 +252,8 @@ class MovieDetailsState extends State<MovieDetailsPage> {
     for (int i = 0; i < _tidbitsBean.videoList.length; i++) {
       item.add(GestureDetector(
         onTap: (){
-          Navigator.push(context, MaterialPageRoute(builder: (context)=>VideoPage(_tidbitsBean.videoList[i].vId.toString())));
+          Navigator.push(context, MaterialPageRoute(builder: (context)=>VideoPage(
+              _tidbitsBean.videoList[i].vId.toString(),_tidbitsBean.videoList[i].title)));
         },
         child: Stack(
 //        alignment: Alignment(0, 1),

@@ -4,6 +4,7 @@ import 'package:flutter_app/bean/HotBean.dart';
 import 'package:flutter_app/bean/MovieBean.dart';
 import 'package:flutter_app/bean/MovieCommentaryBean.dart';
 import 'package:flutter_app/bean/MovieMessageBean.dart';
+import 'package:flutter_app/bean/MoviePlayCommentBean.dart';
 import 'package:flutter_app/bean/PlayUrlBean.dart';
 import 'package:flutter_app/bean/RecommendBean.dart';
 import 'package:flutter_app/bean/SearchBean.dart';
@@ -125,6 +126,16 @@ class SecondHttpManager {
           });
 
   }
+  void moviePlayComment(String id,{Function onSuccess, Function onFailed}){
+    dio.options.baseUrl="https://content-api-m.mtime.cn/";
+    processResponse("subject/review/list.api?relatedObjType=41&top=5&relatedObjId="+id,
+        onSuccess: (data) {
+          var dataList = data["data"];
+          MoviePlayCommentBean bean=MoviePlayCommentBean.fromJson(dataList);
+          onSuccess(bean);
+        }, onFailed: () {
 
+        });
+  }
 
 }
