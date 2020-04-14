@@ -13,7 +13,6 @@ class RelativeDateFormat {
 
   static String format(int time) {
     int now = new DateTime.now().millisecondsSinceEpoch;
-//    print(now);
     int delta = now - time * 1000;
 
     if (delta < 1 * ONE_MINUTE) {
@@ -39,14 +38,6 @@ class RelativeDateFormat {
     String a= DateTime.fromMillisecondsSinceEpoch(time*1000).toString();
 //    print(a.substring(0,a.lastIndexOf(" ")));
     return a.substring(0,a.lastIndexOf(" "));
-
-//    if (delta < 12 * 4 * ONE_WEEK) {
-//      int months = toMonths(delta);
-//      return (months <= 0 ? 1 : months).toString() + ONE_MONTH_AGO;
-//    } else {
-//      int years = toYears(delta);
-//      return (years <= 0 ? 1 : years).toString() + ONE_YEAR_AGO;
-//    }
   }
 
   static int toSeconds(int date) {
@@ -72,4 +63,36 @@ class RelativeDateFormat {
   static int toYears(int date) {
     return toMonths(date) ~/ 365;
   }
+
+  ///格式化毫秒级时间戳
+  static String formatMillisecond(int time) {
+    int now = new DateTime.now().millisecondsSinceEpoch;
+    int delta = now - time;
+
+    if (delta < 1 * ONE_MINUTE) {
+      int seconds = toSeconds(delta);
+      return (seconds <= 0 ? "1" : seconds).toString() + ONE_SECOND_AGO;
+    }
+    if (delta < 45 * ONE_MINUTE) {
+      int minutes = toMinutes(delta);
+      return (minutes <= 0 ? 1 : minutes).toString() + ONE_MINUTE_AGO;
+    }
+    if (delta < 24 * ONE_HOUR) {
+      int hours = toHours(delta);
+      return (hours <= 0 ? 1 : hours).toString() + ONE_HOUR_AGO;
+    }
+    if (delta < 48 * ONE_HOUR) {
+      return "昨天";
+    }
+    if (delta < 30 * ONE_DAY) {
+      int days = toDays(delta);
+      return (days <= 0 ? 1 : days).toString() + ONE_DAY_AGO;
+    }
+    //超过一个月就返回当时的日期
+    String a= DateTime.fromMillisecondsSinceEpoch(time).toString();
+//    print(a.substring(0,a.lastIndexOf(" ")));
+    return a.substring(0,a.lastIndexOf(" "));
+  }
+
+
 }
