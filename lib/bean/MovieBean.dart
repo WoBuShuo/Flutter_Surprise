@@ -1,12 +1,12 @@
 class MovieBean {
     HotPlayMovies hotPlayMovies;
-    MobileMovieComing mobilemoviecoming;
-    MovieBean({this.hotPlayMovies, MobileMovieComing mobilemoviecoming});
+    Mobilemoviecoming mobilemoviecoming;
+    MovieBean({this.hotPlayMovies, Mobilemoviecoming mobilemoviecoming});
 
     factory MovieBean.fromJson(Map<String, dynamic> json) {
         return MovieBean(
             hotPlayMovies: json['hotPlayMovies'] != null ? HotPlayMovies.fromJson(json['hotPlayMovies']) : null,
-            mobilemoviecoming: json['mobilemoviecoming'] != null ? MobileMovieComing.fromJson(json['mobilemoviecoming']) : null,
+            mobilemoviecoming: json['mobilemoviecoming'] != null ? Mobilemoviecoming.fromJson(json['mobilemoviecoming']) : null,
         );
     }
 
@@ -169,25 +169,7 @@ class NearestShowtime {
         return data;
     }
 }
- class MobileMovieComing {
-    Mobilemoviecoming mobilemoviecoming;
 
-    MobileMovieComing({this.mobilemoviecoming});
-
-    factory MobileMovieComing.fromJson(Map<String, dynamic> json) {
-        return MobileMovieComing(
-            mobilemoviecoming: json['mobilemoviecoming'] != null ? Mobilemoviecoming.fromJson(json['mobilemoviecoming']) : null,
-        );
-    }
-
-    Map<String, dynamic> toJson() {
-        final Map<String, dynamic> data = new Map<String, dynamic>();
-        if (this.mobilemoviecoming != null) {
-            data['mobilemoviecoming'] = this.mobilemoviecoming.toJson();
-        }
-        return data;
-    }
-}
 
 class Mobilemoviecoming {
     List<Moviecoming> moviecomings;

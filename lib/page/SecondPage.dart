@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/bean/MovieBean.dart';
 import 'package:flutter_app/net/SecondHttpManager.dart';
 import 'package:flutter_app/page/MovieDetailsPage.dart';
+import 'package:widget_chain/widget_chain.dart';
 
 class SecondPage extends StatefulWidget {
   @override
@@ -44,23 +45,26 @@ class SecondState extends State<SecondPage> {
     SecondHttpManager.getInstance().recommendMovie(onSuccess: (data) {
       setState(() {
         print("lenght: " + data.hotPlayMovies.movies.length.toString());
+        MovieBean movieBean=data as MovieBean;
+
         final size = MediaQuery.of(context).size;
         final width = size.width;
 
-        for (int i = 0; i < data.hotPlayMovies.movies.length; i++) {
-          itemList.add(MovieItem(data.hotPlayMovies.movies[i]));
+        for (int i = 0; i < movieBean.hotPlayMovies.movies.length; i++) {
+          itemList.add(MovieItem(movieBean.hotPlayMovies.movies[i]));
         }
 
-        List mobileItemList = List<MovieItem>();
-//      for(int i=0;i<data.mobilemoviecoming.mobilemoviecoming.moviecomings.length;i++){
-//        mobileItemList.add()
-//      }
+//        List mobileItemList = List<MovieItem>();
+//
+//        for(int i=0;i<movieBean.mobilemoviecoming.mobilemoviecoming.moviecomings.length;i++){
+//          mobileItemList.add(SoonTabItem());
+//        }
 
         tabTitleList.add(Tab(text: '正在热映'));
         tabTitleList.add(Tab(text: '即将上映'));
 
         tabViewList.add(TabItem(itemList));
-        tabViewList.add(TabItem(itemList));
+        tabViewList.add(SoonTabItem(movieBean.mobilemoviecoming.moviecomings));
       });
     });
 //    MovieBean data = await SecondHttpManager.getInstance().recommendMovie();
@@ -125,3 +129,54 @@ class MovieItem extends StatelessWidget {
       );
   }
 }
+
+
+class SoonTabItem extends StatelessWidget {
+  List<Moviecoming> _itemList;
+
+  SoonTabItem(this._itemList);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.all(10),
+      child: GridView.count(
+        crossAxisCount: 2,
+        mainAxisSpacing: 10,
+        crossAxisSpacing: 10,
+        childAspectRatio: 0.60,
+        children: itemList().toList(),
+      ),
+    );
+  }
+
+  List<Widget> itemList(){
+    List<Widget> list=List();
+    if(_itemList==null){
+      return list;
+    }
+    for(int i=0;i<_itemList.length;i++){
+      list.add(Column(
+        children: <Widget>[
+          Expanded(
+            child: Image.network(_itemList[i].image),
+          ),
+          Text(
+            _itemList[i].title,
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+          ).intoPadding(padding: EdgeInsets.only(top: 15)),
+          Text(
+            '上映时间：'+_itemList[i].rYear.toString()+"-"
+                +_itemList[i].rMonth.toString()+"-"
+                +_itemList[i].rDay.toString(),
+          ).intoPadding(padding: EdgeInsets.only(top: 3))
+
+        ],
+      ));
+    }
+    return list;
+  }
+}
+
+
+
