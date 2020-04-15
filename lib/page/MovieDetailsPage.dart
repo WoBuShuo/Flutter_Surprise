@@ -64,22 +64,31 @@ class MovieDetailsState extends State<MovieDetailsPage> {
     }
 
     if (_tidbitsBean != null) {
-      dataList.add(subtitleText('预告片与花絮')
-          .intoPadding(padding: EdgeInsets.only(top: 10)));
-      dataList.add(tidbits());
-    }
-    if (_commentaryBean != null) {
-      dataList.add(
-          subtitleText('短评').intoPadding(padding: EdgeInsets.only(top: 10)));
-      List<Widget> commentaryList = shortCommentary();
-      for (int i = 0; i < commentaryList.length; i++) {
-        dataList.add(commentaryList[i]);
+      if(_tidbitsBean.videoList.length>0){
+        dataList.add(subtitleText('预告片与花絮')
+            .intoPadding(padding: EdgeInsets.only(top: 10)));
+        dataList.add(tidbits());
       }
-      dataList.add(
-          subtitleText('影评').intoPadding(padding: EdgeInsets.only(top: 10)));
-      List<Widget> longCommentaryList = longCommentary();
-      for (int i = 0; i < longCommentaryList.length; i++) {
-        dataList.add(longCommentaryList[i]);
+    }
+
+    if (_commentaryBean != null) {
+      if (_commentaryBean.mini != null &&
+          _commentaryBean.mini.list.length > 0) {
+        dataList.add(
+            subtitleText('短评').intoPadding(padding: EdgeInsets.only(top: 10)));
+        List<Widget> commentaryList = shortCommentary();
+        for (int i = 0; i < commentaryList.length; i++) {
+          dataList.add(commentaryList[i]);
+        }
+      }
+      if (_commentaryBean.plus != null &&
+          _commentaryBean.plus.list.length > 0) {
+        dataList.add(
+            subtitleText('影评').intoPadding(padding: EdgeInsets.only(top: 10)));
+        List<Widget> longCommentaryList = longCommentary();
+        for (int i = 0; i < longCommentaryList.length; i++) {
+          dataList.add(longCommentaryList[i]);
+        }
       }
     }
   }
@@ -168,9 +177,11 @@ class MovieDetailsState extends State<MovieDetailsPage> {
                 .intoExpanded(),
             FlatButton.icon(
               label: Text('想看'),
-              icon:Image.asset('image/movie_details_ic_want.png',
+              icon: Image.asset(
+                'image/movie_details_ic_want.png',
                 width: 23,
-                height: 23,),
+                height: 23,
+              ),
               color: Color(0xFFD3D3D3),
               shape: StadiumBorder(),
               onPressed: () {},
@@ -251,34 +262,42 @@ class MovieDetailsState extends State<MovieDetailsPage> {
     List<Widget> item = new List();
     for (int i = 0; i < _tidbitsBean.videoList.length; i++) {
       item.add(GestureDetector(
-        onTap: (){
-          Navigator.push(context, MaterialPageRoute(builder: (context)=>VideoPage(
-              _tidbitsBean.videoList[i].vId.toString(),_tidbitsBean.videoList[i].title)));
+        onTap: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => VideoPage(
+                      _tidbitsBean.videoList[i].vId.toString(),
+                      _tidbitsBean.videoList[i].title)));
         },
         child: Stack(
 //        alignment: Alignment(0, 1),
           children: <Widget>[
-            Image.network(
-                _tidbitsBean.videoList[i].image,
+            Image.network(_tidbitsBean.videoList[i].image,
                 fit: BoxFit.cover,
                 width: double.infinity,
-                height: double.infinity
+                height: double.infinity),
+            Container(
+              color: Color(0x332D2D2D),
             ),
-            Container(color: Color(0x332D2D2D),),
             Positioned(
               top: 62,
               left: 3,
-              child: Image.asset('image/common_icon_play_small.png',width: 15,height: 15,),
+              child: Image.asset(
+                'image/common_icon_play_small.png',
+                width: 15,
+                height: 15,
+              ),
             ),
             Positioned(
-              top:64,
+              top: 64,
               left: 21,
               child: Text(
                 _tidbitsBean.videoList[i].title,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: TextStyle(color: Colors.white,fontSize: 11),
-              ) ,
+                style: TextStyle(color: Colors.white, fontSize: 11),
+              ),
             )
           ],
         ).intoContainer(width: 140, margin: EdgeInsets.only(right: 5)),
@@ -325,7 +344,8 @@ class MovieDetailsState extends State<MovieDetailsPage> {
                 width: 13,
                 height: 13,
               ),
-              Text(item.praiseCount.toString()).intoContainer(margin: EdgeInsets.only(left: 10)),
+              Text(item.praiseCount.toString())
+                  .intoContainer(margin: EdgeInsets.only(left: 10)),
             ],
           ).intoPadding(padding: EdgeInsets.only(left: 30, top: 10)),
           Divider(
@@ -359,9 +379,17 @@ class MovieDetailsState extends State<MovieDetailsPage> {
 //              Text(item.nickname+" • "+RelativeDateFormat.format(item.commentDate)).intoPadding(padding: EdgeInsets.only(left: 13)),
             ],
           ),
-          Divider(color: Color(0xFFE0DFDF),),
-          Text(item.title,style: TextStyle(color: Colors.black,fontSize: 15),).intoPadding(padding: EdgeInsets.only(top: 10)),
-          Text(item.content,style: TextStyle(color: Colors.grey,fontSize: 12),).intoPadding(padding: EdgeInsets.only(top: 12)),
+          Divider(
+            color: Color(0xFFE0DFDF),
+          ),
+          Text(
+            item.title,
+            style: TextStyle(color: Colors.black, fontSize: 15),
+          ).intoPadding(padding: EdgeInsets.only(top: 10)),
+          Text(
+            item.content,
+            style: TextStyle(color: Colors.grey, fontSize: 12),
+          ).intoPadding(padding: EdgeInsets.only(top: 12)),
           Row(
             children: <Widget>[
               Image.asset("image/common_icon_reply.png", width: 13, height: 13),
@@ -370,7 +398,12 @@ class MovieDetailsState extends State<MovieDetailsPage> {
             ],
           ).intoPadding(padding: EdgeInsets.only(top: 15))
         ],
-      ).intoContainer(padding:EdgeInsets.only(left: 15,top: 13,bottom: 13) ,margin: EdgeInsets.only(top:20),decoration: BoxDecoration(color: Color(0xFFEBEBEB),borderRadius: BorderRadius.circular(6))));
+      ).intoContainer(
+          padding: EdgeInsets.only(left: 15, top: 13, bottom: 13),
+          margin: EdgeInsets.only(top: 20),
+          decoration: BoxDecoration(
+              color: Color(0xFFEBEBEB),
+              borderRadius: BorderRadius.circular(6))));
     }
     return list;
   }

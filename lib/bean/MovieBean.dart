@@ -1,7 +1,7 @@
 class MovieBean {
     HotPlayMovies hotPlayMovies;
     Mobilemoviecoming mobilemoviecoming;
-    MovieBean({this.hotPlayMovies, Mobilemoviecoming mobilemoviecoming});
+    MovieBean({this.hotPlayMovies, this.mobilemoviecoming});
 
     factory MovieBean.fromJson(Map<String, dynamic> json) {
         return MovieBean(
@@ -14,6 +14,9 @@ class MovieBean {
         final Map<String, dynamic> data = new Map<String, dynamic>();
         if (this.hotPlayMovies != null) {
             data['hotPlayMovies'] = this.hotPlayMovies.toJson();
+        }
+        if (this.mobilemoviecoming != null) {
+            data['mobilemoviecoming'] = this.mobilemoviecoming.toJson();
         }
         return data;
     }
